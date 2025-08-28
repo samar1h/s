@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultra URL Shortener</title>
+    <title>LinkShrink - Professional URL Shortener</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -16,82 +17,112 @@
             --bg-secondary: #1a1a1a;
             --bg-tertiary: #2a2a2a;
             --text-primary: #ffffff;
-            --text-secondary: #a0a0a0;
-            --accent: #00ff88;
-            --accent-hover: #00cc6a;
-            --danger: #ff4757;
-            --border: #333333;
+            --text-secondary: #b0b0b0;
+            --accent: #6366f1;
+            --accent-hover: #5855eb;
+            --success: #10b981;
+            --error: #ef4444;
+            --border: #3a3a3a;
         }
 
         body {
-            background: linear-gradient(135deg, var(--bg-primary) 0%, #111111 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
             color: var(--text-primary);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
             overflow-x: hidden;
         }
 
-        .container {
-            width: 100%;
-            max-width: 500px;
-            background: var(--bg-secondary);
-            border-radius: 20px;
-            border: 1px solid var(--border);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-            overflow: hidden;
-            position: relative;
-        }
-
-        .container::before {
-            content: '';
-            position: absolute;
+        .background {
+            position: fixed;
             top: 0;
             left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--accent), #00aaff, var(--accent));
-            opacity: 0.8;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 80%, rgba(239, 68, 68, 0.1) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .header {
             text-align: center;
-            padding: 2rem 2rem 1rem;
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.8s ease-out;
         }
 
         .logo {
-            font-size: 2rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--accent), #00aaff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--accent);
+            animation: pulse 2s infinite;
+        }
+
+        .logo h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--success));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 0.5rem;
-            letter-spacing: -1px;
         }
 
         .subtitle {
             color: var(--text-secondary);
-            font-size: 0.9rem;
-            font-weight: 400;
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
         }
 
-        .main {
-            padding: 0 2rem 2rem;
+        .main-card {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .url-form {
+            margin-bottom: 2rem;
         }
 
         .input-group {
             position: relative;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
 
-        .input {
+        .input-group i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            z-index: 2;
+        }
+
+        .url-input {
             width: 100%;
-            padding: 1rem 1.2rem;
+            padding: 1rem 1rem 1rem 3rem;
             background: var(--bg-tertiary);
             border: 2px solid var(--border);
             border-radius: 12px;
@@ -101,23 +132,22 @@
             outline: none;
         }
 
-        .input:focus {
+        .url-input:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.1);
-            transform: translateY(-1px);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
 
-        .input::placeholder {
+        .url-input::placeholder {
             color: var(--text-secondary);
         }
 
-        .btn {
+        .btn-primary {
             width: 100%;
             padding: 1rem;
             background: linear-gradient(135deg, var(--accent), var(--accent-hover));
             border: none;
             border-radius: 12px;
-            color: var(--bg-primary);
+            color: white;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
@@ -126,366 +156,499 @@
             overflow: hidden;
         }
 
-        .btn:hover {
+        .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.3);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
         }
 
-        .btn:active {
+        .btn-primary:active {
             transform: translateY(0);
         }
 
-        .btn:disabled {
+        .btn-primary:disabled {
             opacity: 0.6;
             cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
         }
 
-        .result {
-            margin-top: 1.5rem;
-            padding: 1rem;
+        .result-section {
+            display: none;
+            padding: 1.5rem;
             background: var(--bg-tertiary);
             border-radius: 12px;
-            border: 1px solid var(--border);
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.4s ease;
+            margin-top: 1rem;
+            animation: slideIn 0.5s ease-out;
         }
 
-        .result.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .result-label {
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .result-section.show {
+            display: block;
         }
 
         .result-url {
-            color: var(--accent);
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 0.95rem;
-            word-break: break-all;
-            cursor: pointer;
-            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
             background: var(--bg-primary);
+            padding: 1rem;
             border-radius: 8px;
-            transition: all 0.2s ease;
-            position: relative;
+            margin-bottom: 1rem;
         }
 
-        .result-url:hover {
-            background: #0f0f0f;
-            transform: scale(1.02);
+        .result-link {
+            flex: 1;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+        .result-link:hover {
+            text-decoration: underline;
         }
 
         .copy-btn {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            background: var(--accent);
+            padding: 0.5rem 1rem;
+            background: var(--success);
             border: none;
             border-radius: 6px;
-            color: var(--bg-primary);
-            padding: 0.3rem 0.6rem;
-            font-size: 0.75rem;
-            font-weight: 600;
+            color: white;
             cursor: pointer;
-            opacity: 0;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
+            white-space: nowrap;
         }
 
-        .result-url:hover .copy-btn {
-            opacity: 1;
+        .copy-btn:hover {
+            background: #059669;
+            transform: scale(1.05);
         }
 
         .stats {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 1rem;
-            font-size: 0.8rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            text-align: center;
             color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .stat-item {
+            padding: 0.5rem;
+            background: var(--bg-primary);
+            border-radius: 8px;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: block;
+        }
+
+        .redirect-message {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .redirect-message i {
+            font-size: 4rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            animation: spin 1s linear infinite;
+        }
+
+        .redirect-message h2 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
         }
 
         .error {
-            color: var(--danger);
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            color: var(--error);
+            padding: 1rem;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: none;
         }
 
         .error.show {
-            opacity: 1;
+            display: block;
+            animation: shake 0.5s ease-out;
         }
 
-        /* Responsive Design */
-        @media (max-width: 640px) {
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 300px;
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-5px);
+            }
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        @media (max-width: 768px) {
             .container {
-                margin: 1rem;
-                border-radius: 16px;
+                padding: 1rem;
             }
-            
-            .header {
-                padding: 1.5rem 1.5rem 1rem;
+
+            .logo h1 {
+                font-size: 2rem;
             }
-            
-            .main {
-                padding: 0 1.5rem 1.5rem;
+
+            .logo i {
+                font-size: 2rem;
             }
-            
-            .logo {
-                font-size: 1.75rem;
+
+            .main-card {
+                padding: 1.5rem;
+            }
+
+            .result-url {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5rem;
+            }
+
+            .copy-btn {
+                width: 100%;
             }
         }
 
         @media (max-width: 480px) {
-            .input, .btn {
-                padding: 0.875rem 1rem;
-                font-size: 0.95rem;
+            .stats {
+                grid-template-columns: 1fr;
             }
-        }
-
-        /* Loading animation */
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .btn.loading {
-            animation: pulse 1.5s infinite;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="background"></div>
+    
+    <div class="container" id="mainContainer">
         <div class="header">
-            <div class="logo">Ultra Short</div>
-            <div class="subtitle">Base-94 URL compression • Lightning fast • Ultra minimal</div>
-        </div>
-        
-        <div class="main">
-            <div class="input-group">
-                <input 
-                    type="url" 
-                    class="input" 
-                    id="urlInput" 
-                    placeholder="Paste your long URL here..."
-                    autocomplete="url"
-                >
-                <div class="error" id="error"></div>
+            <div class="logo">
+                <i class="fas fa-link"></i>
+                <h1>LinkShrink</h1>
             </div>
-            
-            <button class="btn" id="shortenBtn">
-                <span id="btnText">Compress URL</span>
-            </button>
-            
-            <div class="result" id="result">
-                <div class="result-label">Your compressed URL:</div>
-                <div class="result-url" id="resultUrl">
-                    <button class="copy-btn" onclick="copyToClipboard()">Copy</button>
+            <p class="subtitle">Professional URL shortener with maximum compression</p>
+        </div>
+
+        <div class="main-card">
+            <form class="url-form" id="urlForm">
+                <div class="input-group">
+                    <i class="fas fa-globe"></i>
+                    <input 
+                        type="url" 
+                        class="url-input" 
+                        id="urlInput" 
+                        placeholder="Enter your long URL here..." 
+                        required
+                    >
                 </div>
+                <button type="submit" class="btn-primary" id="shortenBtn">
+                    <i class="fas fa-compress-alt"></i> Shorten URL
+                </button>
+            </form>
+
+            <div class="error" id="errorMessage"></div>
+
+            <div class="result-section" id="resultSection">
+                <div class="result-url">
+                    <a href="#" class="result-link" id="resultLink" target="_blank"></a>
+                    <button class="copy-btn" id="copyBtn">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+                
                 <div class="stats">
-                    <span>Compression: <span id="compression">0%</span></span>
-                    <span>Length: <span id="newLength">0</span> chars</span>
+                    <div class="stat-item">
+                        <span class="stat-value" id="compressionRatio">0%</span>
+                        <span>Compression</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="savedChars">0</span>
+                        <span>Chars Saved</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <div class="redirect-message" id="redirectMessage" style="display: none;">
+        <i class="fas fa-external-link-alt"></i>
+        <h2>Redirecting...</h2>
+        <p>Please wait while we redirect you to your destination.</p>
+    </div>
+
     <script>
-        // Base-94 character set (all printable ASCII except space, quotes, and problematic URL chars)
-        const BASE94_CHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!#$%&()*+,-./:;<=>?@[]^_`{|}~';
-        const BASE = BASE94_CHARS.length;
-        
-        // In-memory storage for URL mappings
-        let urlDatabase = new Map();
-        let reverseDatabase = new Map();
-        let counter = 1000; // Start with a higher number for better compression
-
-        function getCurrentDomain() {
-            return window.location.origin;
-        }
-
-        function encodeToBase94(number) {
-            if (number === 0) return BASE94_CHARS[0];
-            
-            let result = '';
-            while (number > 0) {
-                result = BASE94_CHARS[number % BASE] + result;
-                number = Math.floor(number / BASE);
-            }
-            return result;
-        }
-
-        function decodeFromBase94(encoded) {
-            let result = 0;
-            for (let i = 0; i < encoded.length; i++) {
-                const char = encoded[i];
-                const value = BASE94_CHARS.indexOf(char);
-                if (value === -1) throw new Error('Invalid character in encoded string');
-                result = result * BASE + value;
-            }
-            return result;
-        }
-
-        function isValidUrl(string) {
-            try {
-                const url = new URL(string);
-                return url.protocol === 'http:' || url.protocol === 'https:';
-            } catch (_) {
-                return false;
-            }
-        }
-
-        function showError(message) {
-            const errorEl = document.getElementById('error');
-            errorEl.textContent = message;
-            errorEl.classList.add('show');
-            setTimeout(() => errorEl.classList.remove('show'), 4000);
-        }
-
-        function shortenUrl() {
-            const input = document.getElementById('urlInput');
-            const btn = document.getElementById('shortenBtn');
-            const btnText = document.getElementById('btnText');
-            const result = document.getElementById('result');
-            const resultUrl = document.getElementById('resultUrl');
-            const compression = document.getElementById('compression');
-            const newLength = document.getElementById('newLength');
-            
-            const url = input.value.trim();
-            
-            if (!url) {
-                showError('Please enter a URL');
-                return;
-            }
-            
-            if (!isValidUrl(url)) {
-                showError('Please enter a valid URL (including http:// or https://)');
-                return;
+        class URLShortener {
+            constructor() {
+                // Base94 character set (all printable ASCII except space)
+                this.base94Chars = '!"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
+                this.urlMap = new Map();
+                this.reverseUrlMap = new Map();
+                this.init();
             }
 
-            // Show loading state
-            btn.classList.add('loading');
-            btn.disabled = true;
-            btnText.textContent = 'Compressing...';
+            init() {
+                this.checkForRedirect();
+                this.bindEvents();
+            }
 
-            setTimeout(() => {
-                try {
-                    // Check if URL already exists
-                    if (reverseDatabase.has(url)) {
-                        const existingId = reverseDatabase.get(url);
-                        const encoded = encodeToBase94(existingId);
-                        const shortUrl = `${getCurrentDomain()}/${encoded}`;
-                        displayResult(url, shortUrl, encoded);
-                        return;
-                    }
+            bindEvents() {
+                const form = document.getElementById('urlForm');
+                const copyBtn = document.getElementById('copyBtn');
 
-                    // Create new short URL
-                    const id = counter++;
-                    const encoded = encodeToBase94(id);
-                    const shortUrl = `${getCurrentDomain()}/${encoded}`;
-                    
-                    // Store in our databases
-                    urlDatabase.set(id, url);
-                    reverseDatabase.set(url, id);
-                    
-                    displayResult(url, shortUrl, encoded);
-                    
-                } catch (error) {
-                    showError('Error creating short URL. Please try again.');
-                } finally {
-                    // Reset button state
-                    btn.classList.remove('loading');
-                    btn.disabled = false;
-                    btnText.textContent = 'Compress URL';
-                }
-            }, 800); // Simulate processing time for better UX
-        }
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.shortenUrl();
+                });
 
-        function displayResult(originalUrl, shortUrl, encoded) {
-            const result = document.getElementById('result');
-            const resultUrl = document.getElementById('resultUrl');
-            const compression = document.getElementById('compression');
-            const newLength = document.getElementById('newLength');
-            
-            // Calculate compression ratio
-            const originalLength = originalUrl.length;
-            const newUrlLength = shortUrl.length;
-            const compressionRatio = Math.round((1 - newUrlLength / originalLength) * 100); 
-            
-            // Update result display
-            resultUrl.innerHTML = `${shortUrl}<button class="copy-btn" onclick="copyToClipboard()">Copy</button>`;
-            compression.textContent = `${Math.max(0, compressionRatio)}%`;
-            newLength.textContent = newUrlLength;
-            
-            // Show result with animation
-            result.classList.add('show');
-            
-            // Store for copy functionality
-            window.currentShortUrl = shortUrl;
-        }
-
-        function copyToClipboard() {
-            if (window.currentShortUrl) {
-                navigator.clipboard.writeText(window.currentShortUrl).then(() => {
-                    const copyBtn = document.querySelector('.copy-btn');
-                    const originalText = copyBtn.textContent;
-                    copyBtn.textContent = 'Copied!';
-                    copyBtn.style.background = '#00ff88';
-                    setTimeout(() => {
-                        copyBtn.textContent = originalText;
-                        copyBtn.style.background = '';
-                    }, 2000);
-                }).catch(() => {
-                    showError('Failed to copy to clipboard');
+                copyBtn.addEventListener('click', () => {
+                    this.copyToClipboard();
                 });
             }
-        }
 
-        // Handle URL expansion (when someone visits a short URL)
-        function handleShortUrl() {
-            const path = window.location.pathname;
-            if (path.length > 1) {
-                const encoded = path.substring(1); // Remove leading slash
-                try {
-                    const id = decodeFromBase94(encoded);
-                    const originalUrl = urlDatabase.get(id);
-                    if (originalUrl) {
-                        // In a real implementation, this would redirect
-                        alert(`This short URL would redirect to: ${originalUrl}`);
+            checkForRedirect() {
+                const currentUrl = window.location.href;
+                const hashIndex = currentUrl.indexOf('#');
+                
+                if (hashIndex !== -1) {
+                    const encodedUrl = currentUrl.substring(hashIndex + 1);
+                    if (encodedUrl && encodedUrl !== '') {
+                        this.handleRedirect(encodedUrl);
                         return;
                     }
-                } catch (error) {
-                    // Invalid encoded URL
                 }
-                alert('Short URL not found or invalid');
+
+                const params = new URLSearchParams(window.location.search);
+                const redirect = params.get('r');
+                
+                if (redirect) {
+                    this.handleRedirect(redirect);
+                }
+            }
+
+            handleRedirect(encodedUrl) {
+                try {
+                    const decodedUrl = this.base94Decode(encodedUrl);
+                    if (this.isValidUrl(decodedUrl)) {
+                        this.showRedirectMessage();
+                        setTimeout(() => {
+                            window.location.href = decodedUrl;
+                        }, 1500);
+                    } else {
+                        this.showError('Invalid shortened URL');
+                    }
+                } catch (error) {
+                    this.showError('Invalid shortened URL format');
+                }
+            }
+
+            showRedirectMessage() {
+                document.getElementById('mainContainer').style.display = 'none';
+                document.getElementById('redirectMessage').style.display = 'flex';
+                document.getElementById('redirectMessage').style.flexDirection = 'column';
+                document.getElementById('redirectMessage').style.justifyContent = 'center';
+                document.getElementById('redirectMessage').style.alignItems = 'center';
+                document.getElementById('redirectMessage').style.minHeight = '100vh';
+            }
+
+            base94Encode(url) {
+                // Convert URL to bytes
+                const bytes = new TextEncoder().encode(url);
+                let result = '';
+                let num = BigInt(0);
+
+                // Convert bytes to a big integer
+                for (let i = 0; i < bytes.length; i++) {
+                    num = num * BigInt(256) + BigInt(bytes[i]);
+                }
+
+                // Convert to base94
+                if (num === BigInt(0)) {
+                    return this.base94Chars[0];
+                }
+
+                while (num > 0) {
+                    result = this.base94Chars[Number(num % BigInt(94))] + result;
+                    num = num / BigInt(94);
+                }
+
+                return result;
+            }
+
+            base94Decode(encoded) {
+                let num = BigInt(0);
+                const base = BigInt(94);
+
+                // Convert from base94 to big integer
+                for (let i = 0; i < encoded.length; i++) {
+                    const charIndex = this.base94Chars.indexOf(encoded[i]);
+                    if (charIndex === -1) {
+                        throw new Error('Invalid character in encoded string');
+                    }
+                    num = num * base + BigInt(charIndex);
+                }
+
+                // Convert big integer to bytes
+                const bytes = [];
+                while (num > 0) {
+                    bytes.unshift(Number(num % BigInt(256)));
+                    num = num / BigInt(256);
+                }
+
+                // Convert bytes to string
+                return new TextDecoder().decode(new Uint8Array(bytes));
+            }
+
+            isValidUrl(string) {
+                try {
+                    new URL(string);
+                    return true;
+                } catch (_) {
+                    return false;
+                }
+            }
+
+            shortenUrl() {
+                const input = document.getElementById('urlInput');
+                const url = input.value.trim();
+                
+                if (!url) {
+                    this.showError('Please enter a URL');
+                    return;
+                }
+
+                if (!this.isValidUrl(url)) {
+                    this.showError('Please enter a valid URL');
+                    return;
+                }
+
+                try {
+                    const encoded = this.base94Encode(url);
+                    const currentDomain = window.location.origin + window.location.pathname;
+                    const shortUrl = `${currentDomain}#${encoded}`;
+
+                    this.showResult(shortUrl, url, encoded);
+                    this.hideError();
+                } catch (error) {
+                    this.showError('Failed to shorten URL. Please try again.');
+                }
+            }
+
+            showResult(shortUrl, originalUrl, encoded) {
+                const resultSection = document.getElementById('resultSection');
+                const resultLink = document.getElementById('resultLink');
+                const compressionRatio = document.getElementById('compressionRatio');
+                const savedChars = document.getElementById('savedChars');
+
+                resultLink.href = shortUrl;
+                resultLink.textContent = shortUrl;
+
+                const compression = Math.round(((originalUrl.length - shortUrl.length) / originalUrl.length) * 100);
+                const saved = originalUrl.length - shortUrl.length;
+
+                compressionRatio.textContent = `${Math.max(0, compression)}%`;
+                savedChars.textContent = Math.max(0, saved);
+
+                resultSection.classList.add('show');
+            }
+
+            async copyToClipboard() {
+                const resultLink = document.getElementById('resultLink');
+                const copyBtn = document.getElementById('copyBtn');
+                
+                try {
+                    await navigator.clipboard.writeText(resultLink.href);
+                    const originalText = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    copyBtn.style.background = '#10b981';
+                    
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalText;
+                        copyBtn.style.background = '';
+                    }, 2000);
+                } catch (error) {
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = resultLink.href;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    
+                    const originalText = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    copyBtn.style.background = '#10b981';
+                    
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalText;
+                        copyBtn.style.background = '';
+                    }, 2000);
+                }
+            }
+
+            showError(message) {
+                const errorDiv = document.getElementById('errorMessage');
+                errorDiv.textContent = message;
+                errorDiv.classList.add('show');
+            }
+
+            hideError() {
+                const errorDiv = document.getElementById('errorMessage');
+                errorDiv.classList.remove('show');
             }
         }
 
-        // Event listeners
-        document.getElementById('shortenBtn').addEventListener('click', shortenUrl);
-        document.getElementById('urlInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') shortenUrl();
-        });
-
-        // Handle short URL expansion on page load
+        // Initialize the app
         document.addEventListener('DOMContentLoaded', () => {
-            if (window.location.pathname.length > 1) {
-                handleShortUrl();
-            }
+            new URLShortener();
         });
-
-        // Auto-focus input on desktop
-        if (window.innerWidth > 768) {
-            document.getElementById('urlInput').focus();
-        }
     </script>
 </body>
 </html>
