@@ -418,7 +418,7 @@
             // Calculate compression ratio
             const originalLength = originalUrl.length;
             const newUrlLength = shortUrl.length;
-            const compressionRatio = Math.round((1 - newUrlLength / originalLength) * 100);
+            const compressionRatio = Math.round((1 - newUrlLength / originalLength) * 100); 
             
             // Update result display
             resultUrl.innerHTML = `${shortUrl}<button class="copy-btn" onclick="copyToClipboard()">Copy</button>`;
